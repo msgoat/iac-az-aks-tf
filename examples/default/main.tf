@@ -37,6 +37,7 @@ module aks {
   resource_group_name = azurerm_resource_group.owner.name
   resource_group_location = azurerm_resource_group.owner.location
   stage = var.stage
+  kubernetes_version = var.kubernetes_version
 }
 
 resource local_file kube_config {

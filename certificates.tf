@@ -1,5 +1,5 @@
 # create a key vault SSL certificate
-resource azurerm_key_vault_certificate agw {
+resource azurerm_key_vault_certificate cluster_agw {
   name         = "kvc-${var.region_code}-${var.cluster_name}-agw"
   key_vault_id = azurerm_key_vault.solution.id
 

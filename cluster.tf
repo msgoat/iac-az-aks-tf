@@ -5,6 +5,8 @@ resource azurerm_kubernetes_cluster cluster {
   resource_group_name = var.resource_group_name
   location = var.resource_group_location
   dns_prefix = var.cluster_name
+  # IMPORTANT: we need to pin the kubernetes version, otherwise Azure will determine it!
+  kubernetes_version = var.kubernetes_version
   tags = merge(map("Name", "aks-${var.region_code}-${var.cluster_name}"), local.module_common_tags)
 
   # defines the system node group or system pool
@@ -44,14 +46,32 @@ resource azurerm_kubernetes_cluster cluster {
   identity {
     type = "SystemAssigned"
   }
-/*
-  network_profile {
-    load_balancer_profile {
 
+  network_profile {
+    # use kubenet network plugin which is the standard kubernetes networking
+    network_plugin = "kubenet"
+    # send outbound traffic through the AKS managed load balancer
+    outbound_type = "loadBalancer"
+    # use a standard load balancer
+    load_balancer_sku = "Standard"
+    load_balancer_profile {
+      outbound_ip_address_ids = [azurerm_public_ip.cluster_lb.id]
     }
   }
-*/
+
   lifecycle {
-    ignore_changes = [default_node_pool[0].node_count]
+    ignore_changes = [
+      default_node_pool[0].node_count,
+      network_profile[0].load_balancer_profile[0].idle_timeout_in_minutes
+    ]
   }
+}
+
+# create a public IP for the AKS managed load balancer
+resource azurerm_public_ip cluster_lb {
+  name = "pip-${var.region_code}-${var.cluster_name}-lb"
+  resource_group_name = var.resource_group_name
+  location = var.resource_group_location
+  sku = "Standard"
+  allocation_method = "Static"
 }

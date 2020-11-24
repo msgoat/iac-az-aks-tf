@@ -1,4 +1,4 @@
-resource azurerm_application_gateway loadbalancer {
+resource azurerm_application_gateway cluster_agw {
   name = "agw-${var.region_code}-${var.cluster_name}"
   resource_group_name = var.resource_group_name
   location = var.resource_group_location
@@ -6,6 +6,7 @@ resource azurerm_application_gateway loadbalancer {
 
   backend_address_pool {
     name = "bap-${var.region_code}-${var.cluster_name}"
+    ip_addresses = [azurerm_public_ip.cluster_lb.ip_address]
   }
 
   backend_http_settings {
@@ -18,7 +19,7 @@ resource azurerm_application_gateway loadbalancer {
 
   frontend_ip_configuration {
     name = "agw-${var.region_code}-${var.cluster_name}-feipc"
-    public_ip_address_id = azurerm_public_ip.loadbalancer.id
+    public_ip_address_id = azurerm_public_ip.cluster_agw.id
   }
 
   frontend_port {
@@ -53,7 +54,7 @@ resource azurerm_application_gateway loadbalancer {
 
   identity {
     type = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.loadbalancer.id]
+    identity_ids = [azurerm_user_assigned_identity.cluster_agw.id]
   }
 
   request_routing_rule {
@@ -81,7 +82,7 @@ resource azurerm_application_gateway loadbalancer {
 
   ssl_certificate {
     name = "agw-${var.region_code}-${var.cluster_name}-ssl"
-    key_vault_secret_id = azurerm_key_vault_certificate.agw.secret_id
+    key_vault_secret_id = azurerm_key_vault_certificate.cluster_agw.secret_id
   }
 
   ssl_policy {
@@ -97,7 +98,7 @@ resource azurerm_application_gateway loadbalancer {
 }
 
 # create a public IP for the loadbalancer
-resource azurerm_public_ip loadbalancer {
+resource azurerm_public_ip cluster_agw {
   name = "pip-${var.region_code}-${var.cluster_name}-agw"
   resource_group_name = var.resource_group_name
   location = var.resource_group_location
@@ -109,7 +110,7 @@ resource azurerm_public_ip loadbalancer {
 }
 
 # create an user-assigned identity to grant key vault access to application gateway
-resource azurerm_user_assigned_identity loadbalancer {
+resource azurerm_user_assigned_identity cluster_agw {
   name = "id-${var.region_code}-${var.cluster_name}-agw"
   resource_group_name = var.resource_group_name
   location = var.resource_group_location

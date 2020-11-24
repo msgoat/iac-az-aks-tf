@@ -40,7 +40,6 @@ variable network_cidr {
 
 variable kubernetes_version {
   description = "Kubernetes version the AKS service instance should be based on"
-  default = "1.17.13"
 }
 
 variable system_pool_vm_sku {

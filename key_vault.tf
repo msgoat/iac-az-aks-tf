@@ -67,7 +67,7 @@ resource azurerm_key_vault solution {
 
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_user_assigned_identity.loadbalancer.principal_id
+    object_id = azurerm_user_assigned_identity.cluster_agw.principal_id
 #    key_vault_id = azurerm_key_vault.solution.id
 
     secret_permissions = ["get"]

@@ -26,6 +26,10 @@ variable cluster_name {
   description = "name of the AKS cluster to create; will be prefixed according to naming convention"
 }
 
+variable kubernetes_version {
+  description = "Kubernetes version the AKS service instance should be based on"
+}
+
 variable network_cidr {
   description = "CIDR block of the network"
 }
