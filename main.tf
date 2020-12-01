@@ -1,8 +1,18 @@
-# Configure the Azure Provider
-provider "azurerm" {
-  # whilst the `version` attribute is optional, we recommend pinning to a given version of the Provider
-  version = "~> 2.20"
-  features {}
+terraform {
+  required_providers {
+    azurerm = {
+      version = "~> 2.35"
+    }
+    local = {
+      version = "~> 2.0"
+    }
+    helm = {
+      version = "~> 1.3"
+    }
+    kubernetes = {
+      version = "~> 1.13"
+    }
+  }
 }
 
 locals {

@@ -105,3 +105,7 @@ variable user_pool_with_spot_instances {
   type = bool
   default = false
 }
+
+variable kube_config_filename {
+  description = "defines the location the kubeconfig file for the newly created cluster should be written to"
+}

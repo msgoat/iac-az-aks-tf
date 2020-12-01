@@ -1,5 +1,5 @@
 region_name = "West Europe"
-region_code = "eu-west"
+region_code = "westeu"
 organization_name = "msg systems ag"
 department_name = "Automotive Technology"
 project_name = "CloudTrain"

@@ -38,9 +38,9 @@ module aks {
   resource_group_location = azurerm_resource_group.owner.location
   stage = var.stage
   kubernetes_version = var.kubernetes_version
+  kube_config_filename = "${path.module}/aks-${var.region_code}-${var.cluster_name}.yaml"
 }
 
-resource local_file kube_config {
-  content = module.aks.aks_kube_config
-  filename = "${path.module}/${module.aks.aks_name}.yaml"
+output aks_ingress_ip {
+  value = module.aks.aks_ingress_ip
 }

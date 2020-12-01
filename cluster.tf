@@ -54,9 +54,6 @@ resource azurerm_kubernetes_cluster cluster {
     outbound_type = "loadBalancer"
     # use a standard load balancer
     load_balancer_sku = "Standard"
-    load_balancer_profile {
-      outbound_ip_address_ids = [azurerm_public_ip.cluster_lb.id]
-    }
   }
 
   lifecycle {
@@ -67,11 +64,33 @@ resource azurerm_kubernetes_cluster cluster {
   }
 }
 
-# create a public IP for the AKS managed load balancer
-resource azurerm_public_ip cluster_lb {
-  name = "pip-${var.region_code}-${var.cluster_name}-lb"
-  resource_group_name = var.resource_group_name
-  location = var.resource_group_location
-  sku = "Standard"
-  allocation_method = "Static"
+# retrieve the public IP for the AKS managed load balancer
+data azurerm_public_ip cluster_lb {
+  name = reverse(split("/", tolist(azurerm_kubernetes_cluster.cluster.network_profile.0.load_balancer_profile.0.effective_outbound_ips)[0]))[0]
+  resource_group_name = azurerm_kubernetes_cluster.cluster.node_resource_group
+}
+
+# retrieve the AKS managed load balancer
+data azurerm_lb cluster_lb {
+  name = "kubernetes"
+  resource_group_name = azurerm_kubernetes_cluster.cluster.node_resource_group
+}
+
+# retrieve the public IPs which were allocated for the AKS managed load balancer and the Kubernetes services registered to it
+data azurerm_public_ips cluster_lb {
+  resource_group_name = azurerm_kubernetes_cluster.cluster.node_resource_group
+  name_prefix = "kubernetes"
+}
+
+output aks_loadbalancer_id {
+  description = "unique identifier of the AKS managed loadbalancer"
+  value = data.azurerm_lb.cluster_lb.id
+}
+
+output aks_loadbalancer_frontend_ips {
+  value = data.azurerm_lb.cluster_lb.frontend_ip_configuration
+}
+
+output aks_ingress_ip {
+  value = data.azurerm_public_ips.cluster_lb.public_ips
 }
