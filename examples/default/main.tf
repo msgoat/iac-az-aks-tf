@@ -38,5 +38,5 @@ module aks {
   resource_group_location = azurerm_resource_group.owner.location
   stage = var.stage
   kubernetes_version = var.kubernetes_version
-  kube_config_filename = "${path.module}/aks-${var.region_code}-${var.cluster_name}.yaml"
+  kube_config_filename = "${path.module}/output/aks-${var.region_code}-${var.cluster_name}.yaml"
 }

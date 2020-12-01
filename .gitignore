@@ -57,5 +57,4 @@ target/
 **/cxp-az-demo.pub
 
 # keep kubeconf files out of GIT
-**/aks-eu-west-iacaksdef.yaml
-**/kubeconfig.yaml
+**/output
