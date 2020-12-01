@@ -33,8 +33,3 @@ output aks_kube_config {
   description = "kube config required to access the AKS cluster"
   value = azurerm_kubernetes_cluster.cluster.kube_config_raw
 }
-
-output aks_loadbalancer_ip {
-  description = "Public IP of the AKS managed load balancer"
-  value = data.azurerm_public_ip.cluster_lb.ip_address
-}

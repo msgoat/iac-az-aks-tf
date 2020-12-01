@@ -166,8 +166,8 @@ globalArguments: [ ]
 # Additional arguments to be passed at Traefik's binary
 # All available options available on https://docs.traefik.io/reference/static-configuration/cli/
 ## Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
-additionalArguments: [ ]
-#  - "--providers.kubernetesingress.ingressclass=traefik-internal"
+additionalArguments:
+ - "--api.insecure=true"
 #  - "--log.level=DEBUG"
 
 # Environment variables to be passed to Traefik's binary
@@ -234,7 +234,7 @@ ports:
   websecure:
     port: 8443
     # hostPort: 8443
-    expose: true
+    expose: false
     exposedPort: 443
     # The port protocol (TCP/UDP)
     protocol: TCP
@@ -352,21 +352,6 @@ resources: { }
 # limits:
 #   cpu: "300m"
 #   memory: "150Mi"
-affinity: { }
-# # This example pod anti-affinity forces the scheduler to put traefik pods
-# # on nodes where no other traefik pods are scheduled.
-# # It should be used when hostNetwork: true to prevent port conflicts
-#   podAntiAffinity:
-#     requiredDuringSchedulingIgnoredDuringExecution:
-#     - labelSelector:
-#         matchExpressions:
-#         - key: app
-#           operator: In
-#           values:
-#           - {{ template "traefik.name" . }}
-#       topologyKey: failure-domain.beta.kubernetes.io/zone
-nodeSelector: { }
-tolerations: [ ]
 
 # Pods can have priority.
 # Priority indicates the importance of a Pod relative to other Pods.

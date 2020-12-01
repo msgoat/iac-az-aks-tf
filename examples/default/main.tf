@@ -40,7 +40,3 @@ module aks {
   kubernetes_version = var.kubernetes_version
   kube_config_filename = "${path.module}/aks-${var.region_code}-${var.cluster_name}.yaml"
 }
-
-output aks_ingress_ip {
-  value = module.aks.aks_ingress_ip
-}

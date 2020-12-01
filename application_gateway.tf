@@ -24,11 +24,6 @@ resource azurerm_application_gateway cluster_agw {
   }
 
   frontend_port {
-    name = "agw-${var.region_code}-${var.cluster_name}-http"
-    port = 80
-  }
-
-  frontend_port {
     name = "agw-${var.region_code}-${var.cluster_name}-https"
     port = 443
   }
@@ -39,19 +34,12 @@ resource azurerm_application_gateway cluster_agw {
   }
 
   http_listener {
-    name = "agw-${var.region_code}-${var.cluster_name}-http"
-    frontend_ip_configuration_name = "agw-${var.region_code}-${var.cluster_name}-feipc"
-    frontend_port_name = "agw-${var.region_code}-${var.cluster_name}-http"
-    protocol = "Http"
-  }
-
-  http_listener {
     name = "agw-${var.region_code}-${var.cluster_name}-https"
     frontend_ip_configuration_name = "agw-${var.region_code}-${var.cluster_name}-feipc"
     frontend_port_name = "agw-${var.region_code}-${var.cluster_name}-https"
     protocol = "Https"
     ssl_certificate_name = "agw-${var.region_code}-${var.cluster_name}-ssl"
-    host_names = ["traefik.${var.cluster_name}.k8s.azure.msgoat.eu", "apps.${var.cluster_name}.k8s.azure.msgoat.eu"]
+    host_name = "${var.cluster_name}.k8s.azure.msgoat.eu"
   }
 
   identity {
@@ -72,21 +60,6 @@ resource azurerm_application_gateway cluster_agw {
     interval = 30
     timeout = 5
     unhealthy_threshold = 3
-  }
-
-  request_routing_rule {
-    name = "rrr-${var.region_code}-${var.cluster_name}-http"
-    http_listener_name = "agw-${var.region_code}-${var.cluster_name}-http"
-    rule_type = "Basic"
-    redirect_configuration_name = "agw-${var.region_code}-${var.cluster_name}-redirect-to-https"
-  }
-
-  redirect_configuration {
-    name = "agw-${var.region_code}-${var.cluster_name}-redirect-to-https"
-    redirect_type = "Permanent"
-    target_listener_name = "agw-${var.region_code}-${var.cluster_name}-https"
-    include_path = true
-    include_query_string = true
   }
 
   request_routing_rule {
