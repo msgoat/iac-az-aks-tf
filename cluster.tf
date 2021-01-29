@@ -43,16 +43,26 @@ resource azurerm_kubernetes_cluster cluster {
   }
 
   identity {
-    type = "SystemAssigned"
+    type = "UserAssigned"
+    user_assigned_identity_id = azurerm_user_assigned_identity.cluster.id
   }
 
   network_profile {
-    # use kubenet network plugin which is the standard kubernetes networking
-    network_plugin = "kubenet"
+    # use Azure CNI network plugin which is recommended for secure baseline clusters
+    network_plugin = "azure"
     # send outbound traffic through the AKS managed load balancer
     outbound_type = "loadBalancer"
     # use a standard load balancer
     load_balancer_sku = "Standard"
+  }
+
+  role_based_access_control {
+    enabled = true
+    /* TODO: activate Azure AD integration after all users got proper roles!!!
+    azure_active_directory {
+      managed = false
+    }
+    */
   }
 
   lifecycle {
@@ -61,4 +71,6 @@ resource azurerm_kubernetes_cluster cluster {
       network_profile[0].load_balancer_profile[0].idle_timeout_in_minutes
     ]
   }
+
+  depends_on = [null_resource.wait_for_role_assignments_to_control_plane]
 }

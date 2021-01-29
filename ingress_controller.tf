@@ -1,14 +1,5 @@
-# deploys ingress controller traefik with helm
-resource helm_release ingress {
-  name = "k8s-ingress"
-  chart = "traefik"
-  version = "9.11.0"
-  namespace = "k8s-ingress"
-  create_namespace = true
-  dependency_update = true
-  repository = "https://helm.traefik.io/traefik"
-  atomic = true
-  cleanup_on_fail = true
-  values = [file("${path.module}/resources/helm/traefik/values.yaml")]
- # depends_on = [kubernetes_service.internal_lb]
+# collect shared information about the actual ingress controller
+locals {
+  ingress_controller_dns = "ingress.${var.cluster_name}.k8s.azure.msgoat.eu"
+  ingress_controller_ip = var.ingress_controller_type == "TRAEFIK" ? data.kubernetes_service.ingress_traefik[0].load_balancer_ingress[0].ip : (var.ingress_controller_type == "ISTIO" ? data.kubernetes_service.ingress_istio[0].load_balancer_ingress[0].ip : "")
 }

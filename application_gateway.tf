@@ -6,7 +6,6 @@ resource azurerm_application_gateway cluster_agw {
 
   backend_address_pool {
     name = "bap-${var.region_code}-${var.cluster_name}"
-    ip_addresses = [data.kubernetes_service.ingress.load_balancer_ingress[0].ip]
   }
 
   backend_http_settings {
@@ -15,7 +14,6 @@ resource azurerm_application_gateway cluster_agw {
     port = 80
     protocol = "Http"
     request_timeout = 30
-    probe_name = "agw-${var.region_code}-${var.cluster_name}-traefik"
   }
 
   frontend_ip_configuration {
@@ -50,7 +48,7 @@ resource azurerm_application_gateway cluster_agw {
   probe {
     name = "agw-${var.region_code}-${var.cluster_name}-traefik"
     protocol = "Http"
-    host = data.kubernetes_service.ingress.load_balancer_ingress[0].ip
+    host = local.ingress_controller_dns
     port = 80
     path = "/ping"
     # since the ingress endpoint for ping is not exposed we will get always 404

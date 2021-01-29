@@ -1,0 +1,97 @@
+# Default values for hello.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: docker.at41tools.k8s.aws.msgoat.eu/cloudtrain/cnj-hello-backend-micro
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+application:
+  endpoints:
+    http:
+      port: 8080
+  readinessProbe:
+    path: /api/v1/probes/readiness
+  livenessProbe:
+    path: /api/v1/probes/liveness
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  type: kubernetes
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/hello/"
+    appgw.ingress.kubernetes.io/backend-protocol: "http"
+#    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+#    - host: apps.tstdatonaspoke-e.datona.porsche.io
+#      paths: ["/hello(/|$)(.*)"]
+    - paths: ["/"]
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+traefikIngressRoute:
+  enabled: false
+  hostBasedRouting:
+    host: hello.tstdatonaspoke-e.datona.porsche.io
+  pathBasedRouting:
+    host: apps.tstdatonaspoke-e.datona.porsche.io
+    path: /hello
+
+resources: {}
+#  limits:
+#    cpu: 100m
+#    memory: 128Mi
+#  requests:
+#    cpu: 100m
+#    memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  agentpool: user
+
+tolerations: []
+
+affinity: {}

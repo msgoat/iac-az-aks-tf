@@ -29,7 +29,22 @@ output aks_name {
   value = azurerm_kubernetes_cluster.cluster.name
 }
 
+output aks_managed_identity_id {
+  description = "unique identifier of the system assigned managed entity running the AKS cluster"
+  value = azurerm_kubernetes_cluster.cluster.identity[0].principal_id
+}
+
 output aks_kube_config {
   description = "kube config required to access the AKS cluster"
   value = azurerm_kubernetes_cluster.cluster.kube_config_raw
+}
+
+output ingress_controller_dns {
+  description = "DNS name of the ingress controller deployed to the AKS cluster"
+  value = local.ingress_controller_dns
+}
+
+output ingress_controller_ip {
+  description = "IP address of the ingress controller deployed to the AKS cluster; may be public or private"
+  value = local.ingress_controller_ip
 }

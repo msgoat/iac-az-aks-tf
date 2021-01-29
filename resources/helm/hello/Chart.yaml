@@ -1,0 +1,8 @@
+apiVersion: v2
+name: hello
+description: Deploys a hello world application on Azure AKS
+type: application
+
+version: 0.1.0
+
+appVersion: 1.16.0

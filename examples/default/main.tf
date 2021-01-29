@@ -1,12 +1,9 @@
 # Configure the Azure Provider
 provider azurerm {
-  # whilst the `version` attribute is optional, we recommend pinning to a given version of the Provider
-  version = "~> 2.20"
   features {}
 }
 
 provider local {
-  version = "~> 2.0.0"
 }
 
 locals {
@@ -39,4 +36,6 @@ module aks {
   stage = var.stage
   kubernetes_version = var.kubernetes_version
   kube_config_filename = "${path.module}/output/aks-${var.region_code}-${var.cluster_name}.yaml"
+  ingress_controller_type = "TRAEFIK"
+  loadbalancer_type = "EXTERNAL"
 }

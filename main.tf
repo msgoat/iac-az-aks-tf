@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~> 2.35"
+      version = "~> 2.43"
     }
     local = {
       version = "~> 2.0"
@@ -11,6 +11,9 @@ terraform {
     }
     kubernetes = {
       version = "~> 1.13"
+    }
+    null = {
+      version = "~> 3.0"
     }
   }
 }

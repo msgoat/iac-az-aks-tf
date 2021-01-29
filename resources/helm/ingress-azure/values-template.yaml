@@ -1,0 +1,75 @@
+# The values.yaml file is important to templates.
+# This file contains the default values for a chart.
+# These values may be overridden during helm install or helm upgrade.
+
+# Verbosity level of the App Gateway Ingress Controller
+verbosityLevel: 3
+
+# Reconcile period is time period after which AGIC will re-configure Application Gateway if the current state differs from the expected state.
+# If not specified, periodic reconcile is turned off. Range: 30 - 300 (seconds)
+reconcilePeriodSeconds: 30
+
+image:
+  repository: mcr.microsoft.com/azure-application-gateway/kubernetes-ingress
+  tag: 1.2.0
+  pullPolicy: Always
+
+
+kubernetes:
+
+  # Namespace(s) AGIC watches; Leaving this blank watches all namespaces;
+  # Accepts one or many comma-separated values
+  watchNamespace:
+
+  # Port for AGIC's HTTP API endpoint
+  httpServicePort: 8123
+
+  # Specify the scheduling options
+  nodeSelector: {}
+  # disktype: dentro
+  tolerations: []
+  affinity: {}
+
+  # Add pod level annotations
+  podAnnotations: {}
+
+
+################################################################################
+# Specify which application gateway the ingress controller will manage
+# Specity which cloud environment will be used AZURECHINACLOUD,AZUREGERMANCLOUD,AZUREPUBLICCLOUD,AZUREUSGOVERNMENTCLOUD default: AZUREPUBLICCLOUD
+#
+appgw:
+  environment: AZUREPUBLICCLOUD
+  subscriptionId: ${tf_subscription_id}
+  resourceGroup: ${tf_resource_group_name}
+  name: ${tf_application_gateway_name}
+#   # Whether to force private IP for all the listeners on Application Gateway
+  usePrivateIP: false
+  subResourceNamePrefix: ${tf_resource_name_prefix}
+
+################################################################################
+# Specify the authentication with Azure Resource Manager
+#
+# Two authentication methods are available:
+# - Option 1: AAD-Pod-Identity (https://github.com/Azure/aad-pod-identity)
+armAuth:
+  type: aadPodIdentity
+  identityResourceID: ${tf_identity_resource_id}
+  identityClientID: ${tf_identity_client_id}
+#
+# - Option 2: ServicePrincipal as a kubernetes secret
+# armAuth:
+#   type: servicePrincipal
+#
+#   # Generate this value with:
+#   #   az ad sp create-for-rbac --subscription <subscription-uuid> --sdk-auth | base64 -w0
+#   secretJSON: <base64-encoded-JSON-blob>
+
+################################################################################
+# (Legacy: use `kubernetes.nodeSelector` instead) Specify the scheduling options
+nodeSelector: {}
+
+################################################################################
+# Specify if the cluster is RBAC enabled or not
+rbac:
+  enabled: true # true/false

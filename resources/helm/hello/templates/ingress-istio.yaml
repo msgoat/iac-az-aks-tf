@@ -1,0 +1,41 @@
+{{- if and .Values.ingress.enabled (eq .Values.ingress.type "istio") -}}
+{{- $fullName := include "hello.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "hello.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: {{ $svcPort }}
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "hello.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - {{ $fullName }}
+  http:
+    - match:
+        - uri:
+            prefix: /hello
+      route:
+        - destination:
+            host: {{ $fullName }}
+            port:
+              number: 8080
+{{- end }}

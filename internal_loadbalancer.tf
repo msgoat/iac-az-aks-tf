@@ -1,8 +1,8 @@
 # tell AKS to create an internal loadbalancer using private IPs only
 # does not work since the App Service managed identity does not have the permissions
 # to read information about our VNet
-/*
 resource kubernetes_service internal_lb {
+  count = var.loadbalancer_type == "INTERNAL" ? 1 : 0
   metadata {
     name = "internal-app"
     annotations = {
@@ -24,4 +24,3 @@ resource kubernetes_service internal_lb {
     create = "3m"
   }
 }
-*/
